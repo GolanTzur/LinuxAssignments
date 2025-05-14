@@ -1,3 +1,3 @@
-ID: 212515209 NAME: Shir Huri
-ID: 212351506 NAME: Ofek Mahlev
-ID: 318659315 NAME: Golan Tzur
+NAME: Shir Huri
+NAME: Ofek Mahlev
+NAME: Golan Tzur
