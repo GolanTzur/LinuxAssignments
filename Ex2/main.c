@@ -198,8 +198,6 @@ int main(int argc, char *argv[]) {
         pthread_create(&dec_threads[i], NULL, decrypter_thread, &indices[i]);
     }
 
-    sleep(40);
-    stop = 1;
     pthread_cond_broadcast(&new_password_available);
 
     pthread_join(enc_thread, NULL);
