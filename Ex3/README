@@ -1,0 +1,13 @@
+NAME: Shir Huri 
+NAME: Ofek Mahlev 
+NAME: Golan Tzur
+
+Additional Info:
+Docker images at : 
+golantzur/linux_crypt_ex:decrypter
+golantzur/linux_crypt_ex:encrypter
+
+Special Instructions:
+Run run.sh with additional single argument represents the number of decrypters that participate.
+Container Folder Structure (encrypter and decrypter):
+/app contains the source files and /var/logs contains the matched log file
