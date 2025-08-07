@@ -1,0 +1,35 @@
+FROM ubuntu:latest
+
+# Build argument for mount path
+ARG MOUNT_PATH=/mnt/mta
+
+# Copy the .deb package into the container
+COPY mta-utils-dev-x86_64.deb /tmp/
+
+# Install dependencies and the mta-utils-dev package
+RUN apt-get update && \
+    apt-get install -y build-essential libssl-dev && \
+    apt-get install -y /tmp/mta-utils-dev-x86_64.deb || apt-get install -fy && \
+    rm -rf /var/lib/apt/lists/* /tmp/mta-utils-dev-x86_64.deb
+
+# Set working directory
+WORKDIR /app
+
+# Copy only necessary source files
+COPY encrypter.c .
+COPY common.h .
+COPY mta_crypt.h .
+COPY mta_rand.h .
+
+# Compile encrypter using the installed mta_crypt/mta_rand libs
+RUN gcc -o encrypter encrypter.c -lcrypto -lmta_crypt -lmta_rand -DMOUNT_PATH=\"${MOUNT_PATH}\"
+
+# Set up mount point and logs
+RUN mkdir -p ${MOUNT_PATH} /var/log && \
+    chmod 777 ${MOUNT_PATH} /var/log
+
+# Declare volumes
+VOLUME ["${MOUNT_PATH}", "/var/log"]
+
+# Run
+CMD ["./encrypter"]

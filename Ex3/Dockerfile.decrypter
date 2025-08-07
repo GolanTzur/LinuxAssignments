@@ -1,0 +1,34 @@
+FROM ubuntu:latest
+
+# Build argument for mount path
+ARG MOUNT_PATH=/mnt/mta
+
+# Install required packages and the .deb library
+COPY mta-utils-dev-x86_64.deb /tmp/
+RUN apt-get update && \
+    apt-get install -y build-essential libssl-dev && \
+    apt-get install -y /tmp/mta-utils-dev-x86_64.deb || apt-get install -fy && \
+    rm -rf /var/lib/apt/lists/* /tmp/mta-utils-dev-x86_64.deb
+
+# Create working directory
+WORKDIR /app
+
+# Copy only the decrypter and common header
+COPY decrypter.c .
+COPY common.h .
+COPY mta_crypt.h .
+COPY mta_rand.h .
+
+# Compile using the installed library files
+RUN gcc -o decrypter decrypter.c -lcrypto -lmta_crypt -lmta_rand -DMOUNT_PATH=\"${MOUNT_PATH}\"
+
+# Create mount path and log directory
+RUN mkdir -p ${MOUNT_PATH} /var/log && \
+    chmod 777 ${MOUNT_PATH} /var/log
+
+# Declare volumes
+VOLUME ["${MOUNT_PATH}", "/var/log"]
+
+# Run
+ENTRYPOINT ["./decrypter"]
+
